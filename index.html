@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Arch Linux Power Guide – by Chouris</title>
+  <style>
+    body {
+      font-family: "Fira Code", monospace;
+      background-color: #1e1e2e;
+      color: #cdd6f4;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    h1, h2 {
+      color: #89b4fa;
+    }
+    pre {
+      position: relative;
+      background-color: #313244;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+    }
+    code {
+      background-color: transparent;
+      color: #89dceb;
+      font-size: 0.95rem;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #45475a;
+      color: #cdd6f4;
+      border: none;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .copy-btn:hover {
+      background: #6c7086;
+    }
+    ul {
+      list-style: square;
+      margin-left: 1.5rem;
+    }
+    .section {
+      margin-bottom: 3rem;
+    }
+    
+    a {
+      color: #74c7ec;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    a:hover {
+      color: #89b4fa;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 Arch Linux Power Guide</h1>
+  <p>Made by <strong>Chouris</strong> — full keyboard, full rice, full power.</p>
+
+  <div class="section">
+    <h2>💠 Installation Basics</h2>
+    <p>First, go to <a href="https://archlinux.org/download/" target="_blank" rel="noopener noreferrer">Arch Linux Download Page</a> and scroll down to find your country. Click on whatever link you want, and then download the ISO image you want to download (generally the top/latest one with the release date). Now create a bootable USB drive using <a href="https://rufus.ie/" target="_blank" rel="noopener noreferrer">Rufus</a>. For partition scheme use GPT, and for File system, use fat32 with default cluster size.</p>
+    <p>After that, reboot your computer with your usb stick inserted and enter in the BIOS. Set the boot order to boot from your USB drive. Save and exit BIOS
+    <p>When the computer boot up, select the default option. For simplicity, use an ethernet cable, but if you can't, you will need to install your wifi driver, follow this part of the guide and come back.</p>
+    <p>Now, you need your keyboard layout to fit your needs. So, if you have a French Azerty keyboard, you will need to run this command: </p>
+    <pre><code>loadkeys fr</code><button class="copy-btn">📋 Copy</button></pre>
+    <p>Now, for an easy setup, you will use the following command :
+      <pre><code>archinstall</code><button class="copy-btn">📋 Copy</button></pre>
+    </p>
+    <details>
+      <summary style="cursor: pointer; user-select: none;">📦 My configuration</summary>
+      <div style="padding-left: 1rem; margin-top: 0.5rem;">
+        <p>Here is my configuration :</p>
+        <p>Locales → Keyboard layout → fr</p>
+        <p>Mirrors and repositories → select region → france</p>
+        <p>Disk configuration → partioning → Use a best-effort partitioning layout → /sda → ext4 → No</p>
+        <p>Setup root password and user password</p>
+        <p>Profile → Type → Desktop → Hyprland → polkit</p>
+        <p>Graphics driver → all open-source</p>
+        <p>Audio → PipeWire</p>
+        <p>Network configuration → Copy ISO network configuration to installation</p>
+        <p>Additional packages → fastfetch, git</p>
+        <p>Timezone → Paris</p>
+      </div>
+    </details>
+    <p>Install → Yes → Reboot system → unplug USB stick when the screen is black</p>
+  </div>
+
+  <div class="section">
+    <h2>🌀 Discover Hyprland</h2>
+    <p>Select Hyprland (not hyprland-uwsm-managed), and login !</p>
+    <p>You can see the Hyprland version, when i write this, it's 0.49.0. Close the windows by clicking in the "Thanks!" button.</p>
+    <p>Press Super (= windows) + Q to open the terminal.</p>
+    <p>I will install my browser (Brave) for copy paste command line directly to the terminal. But for installing Brave, we need yay, so :</p>
+<pre>
+  <code>> git clone https://aur.archlinux.org/yay.git</code>
+  <code>> cd yay</code>
+  <code>> makepkg -si</code><button class="copy-btn">📋 Copy</button></pre>
+    <p>Now, we can install brave :</p>
+    <pre><code>yay -S brave-bin</code><button class="copy-btn">📋 Copy</button></pre>
+
+    <p>We can check for system-wide updates :</p>
+    <pre><code>sudo pacman -Syu</code><button class="copy-btn">📋 Copy</button></pre>
+  </div>
+
+  <div class="section">
+    <h2>⚙️ Base System Setup</h2>
+
+    <ul><li>Shell: <code>zsh + zinit</code></li></ul>
+
+    <ul><li>Terminal: <code>alacritty</code></li></ul>
+
+    <ul><li>Editor: <code>neovim</code></li></ul>
+
+    <ul><li>Launcher: <code>wofi</code></li></ul>
+
+    <ul><li>Bar: <code>waybar</code></li></ul>
+
+    <ul><li>Wallpaper: <code>swww</code></li></ul>
+
+    <ul><li>File Manager: <code>thunar (GUI)</code> + <code>lf (TUI)</code></li></ul>
+
+    <ul><li>Notifications: <code>mako</code></li></ul>
+
+    <ul><li>Clipboard: <code>cliphist + wl-clipboard</code></li></ul>
+
+    <ul><li>Lockscreen: <code>swaylock-effects</code></li></ul>
+
+    <ul><li>Icons: <code>catppuccin-papirus-folders (mocha-blue)</code></li></ul>
+
+    <ul><li>Font: <code>ttf-iosevka-nerd + noto-fonts</code></li></ul>
+
+    <ul><li>Dotfiles: <code>chezmoi</code></li></ul>
+</div>
+
+  <h2>⬇️ Full installing script</h2>
+  <pre><code>
+    sudo pacman -Syu --noconfirm && \
+    sudo pacman -S --noconfirm zsh alacritty neovim wofi waybar swww mako thunar lf cliphist wl-clipboard ttf-iosevka-nerd noto-fonts noto-fonts-emoji chezmoi && \
+    chsh -s /bin/zsh && \
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
+    
+    command -v yay &> /dev/null || (git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si --noconfirm && cd ..)
+    
+    yay -S --noconfirm swaylock-effects catppuccin-papirus-folders && \
+    papirus-folders -C cat-mocha-blue --theme Papirus && \
+    echo "✅ All requested packages installed!"
+    </code><button class="copy-btn">📋 Copy</button></pre>
+  </div>
+
+  <script>
+    document.querySelectorAll("pre").forEach(block => {
+      const btn = block.querySelector(".copy-btn");
+      const code = block.querySelector("code");
+      btn.addEventListener("click", () => {
+        navigator.clipboard.writeText(code.innerText).then(() => {
+          btn.textContent = "✅ Copied!";
+          setTimeout(() => btn.textContent = "📋 Copy", 2000);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

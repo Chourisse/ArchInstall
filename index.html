@@ -146,21 +146,18 @@
 
   <h2>⬇️ Full installing script</h2>
   <pre><code>
-    #!/bin/bash
-set -e
-PKG_LIST=(zsh alacritty neovim wofi waybar swww mako thunar lf cliphist wl-clipboard ttf-iosevka-nerd noto-fonts noto-fonts-emoji chezmoi)
-sudo pacman -Syu --noconfirm
-sudo pacman -S --noconfirm "${PKG_LIST[@]}"
-chsh -s /bin/zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
-command -v yay &> /dev/null || (git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si --noconfirm && cd ..)
-yay -S --noconfirm swaylock-effects catppuccin-papirus-folders
-papirus-folders -C cat-mocha-blue --theme Papirus
-ALL_PKGS=("${PKG_LIST[@]}" swaylock-effects catppuccin-papirus-folders)
-NOT_FOUND=()
-for pkg in "${ALL_PKGS[@]}"; do pacman -Q "$pkg" &>/dev/null || NOT_FOUND+=("$pkg"); done
-if [ ${#NOT_FOUND[@]} -eq 0 ]; then echo "✅ Tous les paquets sont installés."; else echo "❌ Manquants :"; for p in "${NOT_FOUND[@]}"; do echo "  - $p"; done; exit 1; fi
-
+    set -e
+    PKG_LIST=(zsh alacritty neovim wofi waybar swww mako thunar lf cliphist wl-clipboard ttf-iosevka-nerd noto-fonts noto-fonts-emoji chezmoi)
+    sudo pacman -Syu --noconfirm && sudo pacman -S --noconfirm "${PKG_LIST[@]}"
+    chsh -s /bin/zsh
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
+    command -v yay &>/dev/null || (git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si --noconfirm && cd .. && rm -rf yay)
+    yay -S --noconfirm swaylock-effects papirus-icon-theme papirus-folders
+    git clone https://github.com/catppuccin/papirus-folders.git && cd papirus-folders && sudo cp -r src/* /usr/share/icons/Papirus/ && cd .. && rm -rf papirus-folders
+    papirus-folders -C cat-mocha-blue --theme Papirus
+    ALL_PKGS=("${PKG_LIST[@]}" swaylock-effects papirus-icon-theme papirus-folders)
+    NOT_FOUND=(); for pkg in "${ALL_PKGS[@]}"; do pacman -Q "$pkg" &>/dev/null || yay -Q "$pkg" &>/dev/null || NOT_FOUND+=("$pkg"); done
+    [ ${#NOT_FOUND[@]} -eq 0 ] && echo "✅ Tous les paquets sont installés." || { echo "❌ Manquants :"; for p in "${NOT_FOUND[@]}"; do echo "  - $p"; done; exit 1; }    
     </code><button class="copy-btn">📋 Copy</button></pre>
   </div>
 

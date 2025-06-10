@@ -7,7 +7,7 @@ PKG_LIST=(zsh alacritty neovim wofi waybar swww mako thunar lf cliphist wl-clipb
 sudo pacman -S --noconfirm "${PKG_LIST[@]}"
 
 echo "🐚 Configuration de zsh comme shell par défaut..."
-chsh -s /bin/zsh
+sudo chsh -s /bin/zsh $USER
 
 echo "📦 Vérification de yay..."
 if ! command -v yay &>/dev/null; then

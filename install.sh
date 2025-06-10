@@ -3,7 +3,7 @@ set -e
 
 echo "🔧 Mise à jour du système et installation des paquets requis..."
 sudo pacman -Syu --noconfirm
-PKG_LIST=(zsh alacritty neovim wofi waybar swww mako thunar lf cliphist wl-clipboard ttf-iosevka-nerd noto-fonts-emoji chezmoi networkmanager network-manager-applet bluez bluez-utils blueman)
+PKG_LIST=(zsh alacritty neovim wofi waybar swww mako thunar lf cliphist wl-clipboard ttf-iosevka-nerd noto-fonts noto-fonts-emoji chezmoi networkmanager network-manager-applet bluez bluez-utils blueman)
 sudo pacman -S --noconfirm "${PKG_LIST[@]}"
 
 echo "🐚 Configuration de zsh comme shell par défaut..."
@@ -19,7 +19,7 @@ if ! command -v yay &>/dev/null; then
 fi
 
 echo "📦 Installation des paquets AUR..."
-yay -S --noconfirm brave-bin swaylock-effects papirus-icon-theme papirus-folders ttf-maple-font-git
+yay -S --noconfirm brave-bin swaylock-effects papirus-icon-theme papirus-folders
 
 echo "🎨 Configuration du thème d'icônes..."
 git clone https://github.com/catppuccin/papirus-folders.git
@@ -29,33 +29,8 @@ cd ..
 rm -rf papirus-folders
 papirus-folders -C cat-mocha-blue --theme Papirus
 
-echo "🔠 Configuration de la police Maple Mono avec fallback..."
-mkdir -p ~/.config/fontconfig
-cat > ~/.config/fontconfig/fonts.conf <<EOF
-<?xml version='1.0'?>
-<!DOCTYPE fontconfig SYSTEM 'fonts.dtd'>
-<fontconfig>
-  <alias>
-    <family>monospace</family>
-    <prefer>
-      <family>Maple Mono</family>
-      <family>Iosevka Nerd Font</family>
-    </prefer>
-  </alias>
-  <alias>
-    <family>sans-serif</family>
-    <prefer>
-      <family>Noto Color Emoji</family>
-    </prefer>
-  </alias>
-</fontconfig>
-EOF
-
-echo "🧹 Rafraîchissement du cache de polices..."
-fc-cache -fv
-
 echo "🔍 Vérification finale..."
-ALL_PKGS=("${PKG_LIST[@]}" swaylock-effects papirus-icon-theme papirus-folders ttf-maple-font-git)
+ALL_PKGS=("${PKG_LIST[@]}" swaylock-effects papirus-icon-theme papirus-folders)
 NOT_FOUND=()
 for pkg in "${ALL_PKGS[@]}"; do 
   pacman -Q "$pkg" &>/dev/null || yay -Q "$pkg" &>/dev/null || NOT_FOUND+=("$pkg")

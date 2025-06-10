@@ -62,6 +62,28 @@
       color: #89b4fa;
       text-decoration: underline;
     }
+    
+    details {
+      background-color: #313244;
+      border: 1px solid #45475a;
+      border-radius: 8px;
+      margin: 1rem 0;
+      overflow: hidden;
+    }
+    
+    details > summary {
+      padding: 0.8rem 1rem;
+      background-color: #1e1e2e;
+      cursor: pointer;
+      outline: none;
+      font-weight: bold;
+      color: #89b4fa;
+    }
+    
+    details > div {
+      padding: 1rem;
+      border-top: 1px solid #45475a;
+    }
   </style>
 </head>
 <body>
@@ -81,7 +103,6 @@
     <details>
       <summary style="cursor: pointer; user-select: none;">📦 My configuration</summary>
       <div style="padding-left: 1rem; margin-top: 0.5rem;">
-        <p>Here is my configuration :</p>
         <p>Locales → Keyboard layout → fr</p>
         <p>Mirrors and repositories → select region → france</p>
         <p>Disk configuration → partioning → Use a best-effort partitioning layout → /sda → ext4 → No</p>
@@ -94,22 +115,34 @@
         <p>Timezone → Paris</p>
       </div>
     </details>
-    <p>Install → Yes → Reboot system → unplug USB stick when the screen is black</p>
+    <p>Install → Yes → Reboot system → unplug USB stick when your screen is black</p>
   </div>
 
   <div class="section">
     <h2>🌀 Discover Hyprland</h2>
     <p>Select Hyprland (not hyprland-uwsm-managed), and login !</p>
-    <p>You can see the Hyprland version, when i write this, it's 0.49.0. Close the windows by clicking in the "Thanks!" button.</p>
+    <p>You can see the Hyprland version, when i write this, it's 0.49.0. Close the windows by clicking on the "Thanks!" button.</p>
     <p>Press Super (= windows) + Q to open the terminal.</p>
-    <p>I will install my browser (Brave) for copy paste command line directly to the terminal. But for installing Brave, we need yay, so :</p>
+    <details>
+      <summary>⌨️ Keyboard layout on hyprland</summary>
+      <div style="padding-left: 1rem; margin-top: 0.5rem;">
+        <ul>
+          <li><strong>To change your keyboard layout on hyprland :</strong></li>
+          <li>In the terminal : <code>nvim ~/.config/hypr/hyprland.conf</code></li>
+          <li>In the section Input : kb_layout=fr kb_variant=oss</li>
+          <li>For editing : press i</li>
+          <li>For saving : press esc then :wq</li>
+          <li>then reboot Hyprland with SUPER + M</li>
+        </ul>
+      </div>
+    </details>
+    <p>I will install my browser (Brave) now, but you can do it later if you want. To install Brave, we need yay, so :</p>
 <pre>
   <code>> git clone https://aur.archlinux.org/yay.git</code>
   <code>> cd yay</code>
   <code>> makepkg -si</code><button class="copy-btn">📋 Copy</button></pre>
     <p>Now, we can install brave :</p>
     <pre><code>yay -S brave-bin</code><button class="copy-btn">📋 Copy</button></pre>
-
     <p>We can check for system-wide updates :</p>
     <pre><code>sudo pacman -Syu</code><button class="copy-btn">📋 Copy</button></pre>
   </div>
@@ -139,25 +172,18 @@
 
     <ul><li>Icons: <code>catppuccin-papirus-folders (mocha-blue)</code></li></ul>
 
-    <ul><li>Font: <code>ttf-iosevka-nerd + noto-fonts</code></li></ul>
+    <ul><li>Font: <code>Maple Mono (primary) + Iosevka Nerd Font (fallback) + Noto Color Emoji (emoji)</code></li></ul>
 
     <ul><li>Dotfiles: <code>chezmoi</code></li></ul>
+
+    <ul><li>Bluetooth: <code>bluez + bluez-utils + blueman</code></li></ul>
+
+    <ul><li>Network: <code>networkmanager + network-manager-applet</code></li></ul>
 </div>
 
-  <h2>⬇️ Full installing script</h2>
+  <h2>⬇️ Full installation script</h2>
   <pre><code>
-    set -e
-    PKG_LIST=(zsh alacritty neovim wofi waybar swww mako thunar lf cliphist wl-clipboard ttf-iosevka-nerd noto-fonts noto-fonts-emoji chezmoi)
-    sudo pacman -Syu --noconfirm && sudo pacman -S --noconfirm "${PKG_LIST[@]}"
-    chsh -s /bin/zsh
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh)"
-    command -v yay &>/dev/null || (git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si --noconfirm && cd .. && rm -rf yay)
-    yay -S --noconfirm swaylock-effects papirus-icon-theme papirus-folders
-    git clone https://github.com/catppuccin/papirus-folders.git && cd papirus-folders && sudo cp -r src/* /usr/share/icons/Papirus/ && cd .. && rm -rf papirus-folders
-    papirus-folders -C cat-mocha-blue --theme Papirus
-    ALL_PKGS=("${PKG_LIST[@]}" swaylock-effects papirus-icon-theme papirus-folders)
-    NOT_FOUND=(); for pkg in "${ALL_PKGS[@]}"; do pacman -Q "$pkg" &>/dev/null || yay -Q "$pkg" &>/dev/null || NOT_FOUND+=("$pkg"); done
-    [ ${#NOT_FOUND[@]} -eq 0 ] && echo "✅ Tous les paquets sont installés." || { echo "❌ Manquants :"; for p in "${NOT_FOUND[@]}"; do echo "  - $p"; done; exit 1; }    
+    curl -fsSL "https://raw.githubusercontent.com/chourisse/ArchInstall/main/install.sh" | bash 
     </code><button class="copy-btn">📋 Copy</button></pre>
   </div>
 

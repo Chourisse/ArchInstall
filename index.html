@@ -5,16 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Arch Linux Power Guide – by Chouris</title>
   <style>
+    /* Base Styles */
     body {
       font-family: "Fira Code", monospace;
       background-color: #1e1e2e;
       color: #cdd6f4;
       padding: 2rem;
       line-height: 1.6;
+      overflow-x: hidden;
     }
     h1, h2 {
       color: #89b4fa;
+      opacity: 0;
+      animation: fadeIn 0.6s ease forwards;
     }
+    /* Section Fade-In */
+    .section {
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeIn 0.6s ease forwards;
+    }
+    .section:nth-of-type(1) { animation-delay: 0.2s; }
+    .section:nth-of-type(2) { animation-delay: 0.4s; }
+    .section:nth-of-type(3) { animation-delay: 0.6s; }
+    .section:nth-of-type(4) { animation-delay: 0.8s; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Code Blocks and Buttons */
     pre {
       position: relative;
       background-color: #313244;
@@ -22,7 +43,10 @@
       border-radius: 8px;
       overflow-x: auto;
       margin-bottom: 1.5rem;
+      transition: transform 0.2s;
     }
+    pre:hover { transform: translateY(-2px) scale(1.01); }
+
     code {
       background-color: transparent;
       color: #89dceb;
@@ -39,50 +63,79 @@
       font-size: 0.8rem;
       cursor: pointer;
       border-radius: 4px;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.2s, opacity 0.2s;
     }
     .copy-btn:hover {
       background: #6c7086;
+      transform: scale(1.05);
+      opacity: 1;
     }
-    ul {
-      list-style: square;
-      margin-left: 1.5rem;
+    .copy-btn:active {
+      transform: scale(0.95);
+      opacity: 0.8;
     }
-    .section {
-      margin-bottom: 3rem;
-    }
-    
-    a {
-      color: #74c7ec;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    
-    a:hover {
-      color: #89b4fa;
-      text-decoration: underline;
-    }
-    
+
+    /* Details Dropdown Styling with Full Rounded Corners */
     details {
       background-color: #313244;
       border: 1px solid #45475a;
       border-radius: 8px;
       margin: 1rem 0;
-      overflow: hidden;
+      overflow: visible;
     }
-    
-    details > summary {
-      padding: 0.8rem 1rem;
+    details summary {
+      position: relative;
+      display: block;
+      padding: 0.8rem 1rem 0.8rem 2.5rem;
       background-color: #1e1e2e;
       cursor: pointer;
       outline: none;
       font-weight: bold;
       color: #89b4fa;
+      transition: background 0.2s;
+      border-radius: 8px;
     }
-    
+    /* Remove bottom corners when open to reveal content's rounding */
+    details[open] summary {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    details summary::before {
+      content: '▶';
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%) rotate(0deg);
+      transition: transform 0.2s;
+      color: #89b4fa;
+    }
+    details[open] summary::before {
+      transform: translateY(-50%) rotate(90deg);
+    }
+    details summary:hover {
+      background-color: #45475a;
+    }
+    details summary::-webkit-details-marker {
+      display: none;
+    }
     details > div {
-      padding: 1rem;
+      padding: 1rem 1rem 1rem 2.5rem;
       border-top: 1px solid #45475a;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    /* Link Animation */
+    a {
+      color: #74c7ec;
+      text-decoration: none;
+      transition: color 0.2s, transform 0.2s;
+    }
+    a:hover {
+      color: #89b4fa;
+      text-decoration: underline;
+      transform: translateX(2px);
     }
   </style>
 </head>
@@ -92,27 +145,26 @@
 
   <div class="section">
     <h2>💠 Installation Basics</h2>
-    <p>First, go to <a href="https://archlinux.org/download/" target="_blank" rel="noopener noreferrer">Arch Linux Download Page</a> and scroll down to find your country. Click on whatever link you want, and then download the ISO image you want to download (generally the top/latest one with the release date). Now create a bootable USB drive using <a href="https://rufus.ie/" target="_blank" rel="noopener noreferrer">Rufus</a>. For partition scheme use GPT, and for File system, use fat32 with default cluster size.</p>
-    <p>After that, reboot your computer with your usb stick inserted and enter in the BIOS. Set the boot order to boot from your USB drive. Save and exit BIOS
+    <p>First, go to Arch Linux Download Page and scroll down to find your country. Click on whatever link you want, and then download the ISO image you want to download (generally the top/latest one with the release date). Now create a bootable USB drive using Rufus. For partition scheme use GPT, and for File system, use fat32 with default cluster size.</p>
+    <p>After that, reboot your computer with your usb stick inserted and enter in the BIOS. Set the boot order to boot from your USB drive. Save and exit BIOS</p>
     <p>When the computer boot up, select the default option. For simplicity, use an ethernet cable, but if you can't, you will need to install your wifi driver, follow this part of the guide and come back.</p>
-    <p>Now, you need your keyboard layout to fit your needs. So, if you have a French Azerty keyboard, you will need to run this command: </p>
+    <p>Now, you need your keyboard layout to fit your needs. So, if you have a French Azerty keyboard, you will need to run this command:</p>
     <pre><code>loadkeys fr</code><button class="copy-btn">📋 Copy</button></pre>
-    <p>Now, for an easy setup, you will use the following command :
-      <pre><code>archinstall</code><button class="copy-btn">📋 Copy</button></pre>
-    </p>
+    <p>Now, for an easy setup, you will use the following command :</p>
+    <pre><code>archinstall</code><button class="copy-btn">📋 Copy</button></pre>
     <details>
-      <summary style="cursor: pointer; user-select: none;">📦 My configuration</summary>
-      <div style="padding-left: 1rem; margin-top: 0.5rem;">
+      <summary>📦 My installer configuration</summary>
+      <div>
         <p>Locales → Keyboard layout → fr</p>
         <p>Mirrors and repositories → select region → france</p>
         <p>Disk configuration → partioning → Use a best-effort partitioning layout → /sda → ext4 → No</p>
         <p>Setup root password and user password</p>
         <p>Profile → Type → Desktop → Hyprland → polkit</p>
-        <p>Graphics driver → all open-source</p>
+        <p>Graphics driver → Intel open-source</p>
         <p>Audio → PipeWire</p>
         <p>Network configuration → Copy ISO network configuration to installation</p>
         <p>Additional packages → fastfetch, git</p>
-        <p>Timezone → Paris</p>
+        <p>Timezone → Europe/Paris</p>
       </div>
     </details>
     <p>Install → Yes → Reboot system → unplug USB stick when your screen is black</p>
@@ -120,27 +172,33 @@
 
   <div class="section">
     <h2>🌀 Discover Hyprland</h2>
-    <p>Select Hyprland (not hyprland-uwsm-managed), and login !</p>
-    <p>You can see the Hyprland version, when i write this, it's 0.49.0. Close the windows by clicking on the "Thanks!" button.</p>
-    <p>Press Super (= windows) + Q to open the terminal.</p>
+    <p>Login to Hyprland (not hyprland-uwsm-managed).</p>
+    <p>Close welcome window with "Thanks!" button.</p>
+    <p>Super+Q(or A) opens terminal.</p>
     <details>
-      <summary>⌨️ Keyboard layout on hyprland</summary>
-      <div style="padding-left: 1rem; margin-top: 0.5rem;">
+      <summary>OpenSSH setup</summary>
+      <div>
         <ul>
-          <li><strong>To change your keyboard layout on hyprland :</strong></li>
-          <li>In the terminal : <code>nvim ~/.config/hypr/hyprland.conf</code></li>
-          <li>In the section Input : kb_layout=fr kb_variant=oss</li>
-          <li>For editing : press i</li>
-          <li>For saving : press esc then :wq</li>
-          <li>then reboot Hyprland with SUPER + M</li>
+          <li><code>sudo pacman -S openssh</code></li>
+          <li><code>sudo systemctl enable sshd</code></li>
+          <li><code>sudo systemctl start sshd</code></li>
         </ul>
       </div>
     </details>
+    <details>
+      <summary>Keyboard layout on Hyprland</summary>
+      <div>
+        <ol>
+          <li><code>nano ~/.config/hypr/hyprland.conf</code></li>
+          <li>Set: <code>kb_layout= fr</code> <code>kb_variant= oss</code></li>
+          <li>Save and reload (Ctrl+o, Enter, then Ctrl+X, finally Super+M)</li>
+        </ol>
+      </div>
+    </details>
     <p>I will install my browser (Brave) now, but you can do it later if you want. To install Brave, we need yay, so :</p>
-<pre>
-  <code>> git clone https://aur.archlinux.org/yay.git</code>
-  <code>> cd yay</code>
-  <code>> makepkg -si</code><button class="copy-btn">📋 Copy</button></pre>
+    <pre><code>git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg -si</code><button class="copy-btn">📋 Copy</button></pre>
     <p>Now, we can install brave :</p>
     <pre><code>yay -S brave-bin</code><button class="copy-btn">📋 Copy</button></pre>
     <p>We can check for system-wide updates :</p>
@@ -149,42 +207,59 @@
 
   <div class="section">
     <h2>⚙️ Base System Setup</h2>
+    <ul>
+      <li>Shell: <code>zsh + zinit</code></li>
+      <li>Terminal: <code>alacritty</code></li>
+      <li>Editor: <code>neovim</code></li>
+      <li>Launcher: <code>wofi</code></li>
+      <li>Bar: <code>waybar</code></li>
+      <li>Wallpaper: <code>swww</code></li>
+      <li>File Manager: <code>thunar</code> + <code>lf</code></li>
+      <li>Notifications: <code>mako</code></li>
+      <li>Clipboard: <code>cliphist + wl-clipboard</code></li>
+      <li>Lockscreen: <code>swaylock-effects</code></li>
+      <li>Icons: <code>catppuccin-papirus-folders</code></li>
+      <li>Font: <code>iosevka-nerd + noto-fonts-emoji</code></li>
+      <li>Dotfiles: <code>chezmoi</code></li>
+      <li>Bluetooth: <code>bluez + bluez-utils + blueman</code></li>
+      <li>Network: <code>networkmanager + network-manager-applet</code></li>
+    </ul>
+  </div>
 
-    <ul><li>Shell: <code>zsh + zinit</code></li></ul>
+  <div class="section">
+    <h2>⬇️ Full installation script</h2>
+    <pre><code>curl -fsSL "https://raw.githubusercontent.com/chourisse/ArchInstall/main/install.sh" | bash</code><button class="copy-btn">📋 Copy</button></pre>
+  </div>
 
-    <ul><li>Terminal: <code>alacritty</code></li></ul>
-
-    <ul><li>Editor: <code>neovim</code></li></ul>
-
-    <ul><li>Launcher: <code>wofi</code></li></ul>
-
-    <ul><li>Bar: <code>waybar</code></li></ul>
-
-    <ul><li>Wallpaper: <code>swww</code></li></ul>
-
-    <ul><li>File Manager: <code>thunar (GUI)</code> + <code>lf (TUI)</code></li></ul>
-
-    <ul><li>Notifications: <code>mako</code></li></ul>
-
-    <ul><li>Clipboard: <code>cliphist + wl-clipboard</code></li></ul>
-
-    <ul><li>Lockscreen: <code>swaylock-effects</code></li></ul>
-
-    <ul><li>Icons: <code>catppuccin-papirus-folders (mocha-blue)</code></li></ul>
-
-    <ul><li>Font: <code>Maple Mono (primary) + Iosevka Nerd Font (fallback) + Noto Color Emoji (emoji)</code></li></ul>
-
-    <ul><li>Dotfiles: <code>chezmoi</code></li></ul>
-
-    <ul><li>Bluetooth: <code>bluez + bluez-utils + blueman</code></li></ul>
-
-    <ul><li>Network: <code>networkmanager + network-manager-applet</code></li></ul>
-</div>
-
-  <h2>⬇️ Full installation script</h2>
-  <pre><code>
-    curl -fsSL "https://raw.githubusercontent.com/chourisse/ArchInstall/main/install.sh" | bash 
-    </code><button class="copy-btn">📋 Copy</button></pre>
+  <div class="section">
+    <h2>🛠️ Managing Dotfiles with <code>chezmoi</code></h2>
+    <p>To easily synchronize your configuration across multiple computers :</p>
+    <ol>
+      <li><strong>Initialize your repository :</strong>
+        <pre><code>chezmoi init --apply (your github name account) --ssh</code><button class="copy-btn">📋 Copy</button></pre>
+      </li>
+      <li><strong>Add your configuration files</strong> (example for Hyprland):
+        <pre><code>chezmoi add ~/.config/hypr
+chezmoi git -- add .
+chezmoi git -- commit -m "Add Hyprland config"
+chezmoi git -- push -u origin main</code><button class="copy-btn">📋 Copy</button></pre>
+      </li>
+      <li><strong>Update from Windows:</strong>
+        <ul>
+          <li>Transfer <code>hyprland.conf</code> to Arch using <code>scp</code>:</li>
+          <li><pre><code>scp C:\\path\\to\\hyprland.conf your_arch_user@ARCH_IP:~/.config/hypr/hyprland.conf</code><button class="copy-btn">📋 Copy</button></pre></li>
+          <li>Then run:</li>
+        </ul>
+        <pre><code>chezmoi add ~/.config/hypr/hyprland.conf
+chezmoi git -- add .
+chezmoi git -- commit -m "Update hyprland.conf from Windows"
+chezmoi git -- push</code><button class="copy-btn">📋 Copy</button></pre>
+      </li>
+      <li><strong>Apply on another computers :</strong>
+        <pre><code>chezmoi update
+chezmoi apply</code><button class="copy-btn">📋 Copy</button></pre>
+      </li>
+    </ol>
   </div>
 
   <script>

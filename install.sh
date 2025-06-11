@@ -20,7 +20,21 @@ if ! command -v yay &>/dev/null; then
   rm -rf "$tmpdir"
 fi
 
-echo "📦 Installation des paquets AUR..."
+echo "📦 Vérification de paru..."
+if ! command -v paru &>/dev/null; then
+  echo "⬇️  Installation de paru depuis l'AUR..."
+  tmpdir=$(mktemp -d)
+  git clone https://aur.archlinux.org/paru.git "$tmpdir"
+  cd "$tmpdir"
+  makepkg -si --noconfirm
+  cd -
+  rm -rf "$tmpdir"
+fi
+
+echo "📦 Installation des paquets AUR avec paru..."
+paru -S --noconfirm brave-bin swaylock-effects papirus-icon-theme papirus-folders ttf-maplemono-nf-unhinted
+
+echo "📦 Installation des paquets AUR avec yay (au cas où)..."
 yay -S --noconfirm brave-bin swaylock-effects papirus-icon-theme papirus-folders ttf-maplemono-nf-unhinted
 
 echo "🎨 Configuration du thème d'icônes..."
@@ -60,7 +74,7 @@ echo "🔍 Vérification finale..."
 ALL_PKGS=("${PKG_LIST[@]}" brave-bin swaylock-effects papirus-icon-theme papirus-folders ttf-maplemono-nf-unhinted)
 NOT_FOUND=()
 for pkg in "${ALL_PKGS[@]}"; do 
-  pacman -Q "$pkg" &>/dev/null || yay -Q "$pkg" &>/dev/null || NOT_FOUND+=("$pkg")
+  pacman -Q "$pkg" &>/dev/null || yay -Q "$pkg" &>/dev/null || paru -Q "$pkg" &>/dev/null || NOT_FOUND+=("$pkg")
 done
 
 if [ ${#NOT_FOUND[@]} -eq 0 ]; then 

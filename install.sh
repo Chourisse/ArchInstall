@@ -20,22 +20,8 @@ if ! command -v yay &>/dev/null; then
   rm -rf "$tmpdir"
 fi
 
-echo "📦 Vérification de paru..."
-if ! command -v paru &>/dev/null; then
-  echo "⬇️  Installation de paru depuis l'AUR..."
-  tmpdir=$(mktemp -d)
-  git clone https://aur.archlinux.org/paru.git "$tmpdir"
-  cd "$tmpdir"
-  makepkg -si --noconfirm
-  cd -
-  rm -rf "$tmpdir"
-fi
-
-echo "📦 Installation des paquets AUR avec paru..."
-paru -S --noconfirm brave-bin swaylock-effects papirus-icon-theme papirus-folders ttf-maplemono-nf-unhinted
-
-echo "📦 Installation des paquets AUR avec yay (au cas où)..."
-yay -S --noconfirm brave-bin swaylock-effects papirus-icon-theme papirus-folders ttf-maplemono-nf-unhinted
+echo "📦 Installation des paquets AUR avec yay..."
+yay -S --noconfirm brave-bin swaylock-effects papirus-icon-theme papirus-folders
 
 echo "🎨 Configuration du thème d'icônes..."
 git clone https://github.com/catppuccin/papirus-folders.git
@@ -45,39 +31,14 @@ cd ..
 rm -rf papirus-folders
 papirus-folders -C cat-mocha-blue --theme Papirus
 
-echo "🔠 Configuration de la police Maple Mono avec fallback..."
-mkdir -p ~/.config/fontconfig
-cat > ~/.config/fontconfig/fonts.conf <<EOF
-<?xml version='1.0'?>
-<!DOCTYPE fontconfig SYSTEM 'fonts.dtd'>
-<fontconfig>
-  <alias>
-    <family>monospace</family>
-    <prefer>
-      <family>Maple Mono NF Unhinted</family>
-      <family>Iosevka Nerd Font</family>
-    </prefer>
-  </alias>
-  <alias>
-    <family>sans-serif</family>
-    <prefer>
-      <family>Noto Color Emoji</family>
-    </prefer>
-  </alias>
-</fontconfig>
-EOF
-
-echo "🧹 Rafraîchissement du cache de polices..."
-fc-cache -fv
-
 echo "🔍 Vérification finale..."
-ALL_PKGS=("${PKG_LIST[@]}" brave-bin swaylock-effects papirus-icon-theme papirus-folders ttf-maplemono-nf-unhinted)
+ALL_PKGS=("${PKG_LIST[@]}" brave-bin swaylock-effects papirus-icon-theme papirus-folders)
 NOT_FOUND=()
-for pkg in "${ALL_PKGS[@]}"; do 
-  pacman -Q "$pkg" &>/dev/null || yay -Q "$pkg" &>/dev/null || paru -Q "$pkg" &>/dev/null || NOT_FOUND+=("$pkg")
+for pkg in "${ALL_PKGS[@]}"; do
+  pacman -Q "$pkg" &>/dev/null || yay -Q "$pkg" &>/dev/null || NOT_FOUND+=("$pkg")
 done
 
-if [ ${#NOT_FOUND[@]} -eq 0 ]; then 
+if [ ${#NOT_FOUND[@]} -eq 0 ]; then
   echo "✅ Tous les paquets sont installés avec succès !"
 else
   echo "❌ Certains paquets n'ont pas pu être installés :"

@@ -3,23 +3,25 @@ set -e
 
 echo "🔧 Mise à jour du système et installation des paquets requis..."
 sudo pacman -Syu --noconfirm
-PKG_LIST=(zsh alacritty neovim wofi waybar swww mako thunar lf cliphist wl-clipboard ttf-iosevka-nerd noto-fonts-emoji chezmoi networkmanager network-manager-applet bluez bluez-utils blueman openssh)
+PKG_LIST=(zsh alacritty neovim wofi waybar swww mako thunar lf cliphist wl-clipboard ttf-iosevka-nerd noto-fonts-emoji chezmoi networkmanager network-manager-applet bluez bluez-utils blueman openssh unzip)
 sudo pacman -S --noconfirm "${PKG_LIST[@]}"
 
 echo "🐚 Configuration de zsh comme shell par défaut..."
-sudo chsh -s /bin/zsh $USER
+sudo chsh -s /bin/zsh "$USER"
 
 echo "📦 Vérification de yay..."
 if ! command -v yay &>/dev/null; then
   echo "⬇️  Installation de yay depuis l'AUR..."
-  git clone https://aur.archlinux.org/yay.git
-  cd yay && makepkg -si --noconfirm
-  cd ..
-  rm -rf yay
+  tmpdir=$(mktemp -d)
+  git clone https://aur.archlinux.org/yay.git "$tmpdir"
+  cd "$tmpdir"
+  makepkg -si --noconfirm
+  cd -
+  rm -rf "$tmpdir"
 fi
 
 echo "📦 Installation des paquets AUR..."
-yay -S --noconfirm brave-bin swaylock-effects papirus-icon-theme papirus-folders ttf-maple-font-git
+yay -S --noconfirm brave-bin swaylock-effects papirus-icon-theme papirus-folders ttf-maplemono-nf-unhinted
 
 echo "🎨 Configuration du thème d'icônes..."
 git clone https://github.com/catppuccin/papirus-folders.git
@@ -38,7 +40,7 @@ cat > ~/.config/fontconfig/fonts.conf <<EOF
   <alias>
     <family>monospace</family>
     <prefer>
-      <family>Maple Mono</family>
+      <family>Maple Mono NF Unhinted</family>
       <family>Iosevka Nerd Font</family>
     </prefer>
   </alias>
@@ -55,11 +57,12 @@ echo "🧹 Rafraîchissement du cache de polices..."
 fc-cache -fv
 
 echo "🔍 Vérification finale..."
-ALL_PKGS=("${PKG_LIST[@]}" swaylock-effects papirus-icon-theme papirus-folders ttf-maple-font-git)
+ALL_PKGS=("${PKG_LIST[@]}" brave-bin swaylock-effects papirus-icon-theme papirus-folders ttf-maplemono-nf-unhinted)
 NOT_FOUND=()
 for pkg in "${ALL_PKGS[@]}"; do 
   pacman -Q "$pkg" &>/dev/null || yay -Q "$pkg" &>/dev/null || NOT_FOUND+=("$pkg")
 done
+
 if [ ${#NOT_FOUND[@]} -eq 0 ]; then 
   echo "✅ Tous les paquets sont installés avec succès !"
 else
